@@ -1,0 +1,17 @@
+
+# Setting PATH for Python 2.7
+# The orginal version is saved in .bash_profile.pysave
+PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
+export PATH
+
+# Setting PATH for Python 3.3
+# The orginal version is saved in .bash_profile.pysave
+PATH="/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}"
+
+#include homebrew installed PyQt5
+export PYTHONPATH="/usr/local/lib/python3.3/site-packages/:${PYTHONPATH}"
+
+#call code in bashrc too
+if [ -f ~/.bashrc ]; then
+    source ~/.bashrc
+fi

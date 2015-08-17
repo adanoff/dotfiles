@@ -1,5 +1,4 @@
 syntax on
-set nocompatible
 set smartindent
 set tabstop=4
 set shiftwidth=4
@@ -14,6 +13,7 @@ set numberwidth=5
 set ruler
 
 set hidden
+set wildmode="longest,list:longest"
 
 set laststatus=2 "Allow status bar with single window
 
@@ -22,6 +22,10 @@ let mapleader = ','
 
 "Set local leader key to \
 let maplocalleader = '\'
+
+"Enable cursor shapes
+let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
+"let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
 "Map jk to esc
 inoremap jk <ESC>
@@ -39,7 +43,7 @@ set omnifunc=syntaxcomplete#Complete
 "set splitbelow
 
 "Set par to be the format program
-set formatprg=par\ -w72
+set formatprg=par\ -w{&textwidth}
 
 "Show invisible space characters
 "Change to += to keep `$` at end of line
@@ -48,7 +52,7 @@ set list
 
 "tmux integration
 if exists('$TMUX')
-      set term=screen-256color
+      "set term=screen-256color
 endif
 
 if exists('$ITERM_PROFILE')
@@ -63,11 +67,14 @@ end
 
 execute pathogen#infect()
 
+" Terminal stuff
+tnoremap jk <C-\><C-n>
+
 " Fix focusing bug
 let g:vitality_fix_focus=0
 
 "Colorscheme stuff
-set t_Co=256
+"set t_Co=256
 colorscheme detailed
 
 "Copy selected text to clipboard
@@ -104,15 +111,15 @@ let g:airline#extensions#ctrlp#color_template = 'normal'
 
 "========END Airline configuration========
 
-"Enable rust concealing
-let g:rust_conceal=1
-
 "Make it easier to replace with the first suggestion for spelling
 nnoremap <leader>z= 1z=
 
 "Make it easier to edit vimrc from vim
 nnoremap <leader>vie :vsplit $MYVIMRC<CR>
-noremap <leader>sv :source $MYVIMRC<CR>
+nnoremap <leader>sv :source $MYVIMRC<CR>
+
+" Remove search highlighting
+nnoremap <C-L> :noh<CR><C-L>
 
 "====================dragvisuals.vim setup====================
 vnoremap  <expr>  <LEFT>   DVB_Drag('left')
