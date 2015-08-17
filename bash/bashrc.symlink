@@ -1,7 +1,3 @@
-export GOPATH=/Users/mathtutorx10/Programming/go
-export SCHOOL="/Users/mathtutorx10/Documents/School/Grade 12/"
-export EDITOR="nvim"
-
 PATH=$PATH:/Developer/usr/bin/
 
 #virtualenv wrapper
@@ -23,8 +19,6 @@ unset EMACS_PATH
 
 export PATH
 
-export PAGER=/usr/bin/less
-
 export HISTCONTROL=ignorespace
 
 # virtualenv wrapper stuff
@@ -37,8 +31,37 @@ alias ls="ls -G"
 alias netcat="nc"
 alias valgrind="valgrind --leak-check=full --show-leak-kinds=all"
 
-#vi editing
+# vi editing
 set -o vi
 
-#dwarf fortress
-alias dwarf='/Users/mathtutorx10/Documents/DF/df_osx/df'
+# Stash your environment variables in ~/.localrc. This means they'll stay out
+# of your main dotfiles repository (which may be public, like this one), but
+# you'll have access to them in your scripts.
+if [[ -a ~/.localrc ]]
+then
+  source ~/.localrc
+fi
+
+# read in aliases from dotfile directory
+export LOC="$HOME/.dotfiles"
+path_files="$LOC/*/path.bash"
+other_files=$(find "$LOC" -name "*.bash" -not -name "path.bash" -not -name "completion.bash")
+completion_files="$LOC/*/completion.bash"
+
+# source path files
+for file in $path_files
+do
+    source "$file"
+done
+
+# source bash files that are not path files nor completion files
+for file in $other_files
+do
+    source "$file"
+done
+
+# source completion files
+for file in $completion_files
+do
+    source "$file"
+done
