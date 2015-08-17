@@ -44,9 +44,9 @@ fi
 
 # read in aliases from dotfile directory
 export LOC="$HOME/.dotfiles"
-path_files="$LOC/*/path.bash"
+path_files=$(find "$LOC" -name "path.bash")
 other_files=$(find "$LOC" -name "*.bash" -not -name "path.bash" -not -name "completion.bash")
-completion_files="$LOC/*/completion.bash"
+completion_files=$(find "$LOC" -name "completion.bash")
 
 # source path files
 for file in $path_files
