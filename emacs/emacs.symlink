@@ -1,0 +1,112 @@
+(require 'package)
+
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+
+;; package installation
+(defun ensure-package-installed (&rest packages)
+  "Assure every package is installed, ask for installation if it's not.
+Return a list of installed packages or nil for every skipped package."
+
+  (mapcar
+   (lambda (package)
+     (if (package-installed-p package)
+	 nil
+       (if (y-or-n-p (format "Package %s is missing. Install it? " package))
+	   (package-install package)
+	 package)))
+   packages))
+
+;; Make sure to have downloaded archive description.
+(or (file-exists-p package-user-dir)
+    (package-refresh-contents))
+
+;; Activate installed packages
+(package-initialize)
+
+;; Make sure certain packages are installed
+(ensure-package-installed 'evil
+			  'evil-escape
+			  'evil-org
+			  'powerline-evil
+			  'helm
+			  'evil-surround)
+
+(setq package-enable-at-startup nil)
+(package-initialize)
+
+;; remove the extra shit
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
+;; Configure helm
+(require 'helm)
+(require 'helm-config)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-h a") 'helm-apropos)
+(helm-mode 1)
+
+;; Configure evil
+(setq evil-want-C-u-scroll t)
+
+;; Configure evil-org-mode
+(require 'evil-org)
+
+;; Evil leader
+(global-evil-leader-mode)
+(evil-leader/set-leader ",")
+(setq evil-leader/in-all-states 1)
+
+;; Load evil
+(require 'evil)
+(require 'evil-escape)
+(evil-escape-mode)
+(evil-mode 1)
+
+;; Configure evil surround
+(require 'evil-surround)
+(global-evil-surround-mode 1)
+
+;; Powerline-evil
+(require 'powerline-evil)
+(powerline-evil-vim-color-theme)
+;(display-time-mode t)
+
+;; Set up markdown mode
+(autoload 'markdown-mode "markdown-mode"
+    "Major mode for editing Markdown files" t)
+;;(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+(add-hook 'python-mode-hook
+	  (lambda ()
+	    (setq python-shell-interpreter "python3")))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(helm-M-x-fuzzy-match t)
+ '(org-fontify-done-headline t)
+ '(org-todo-keyword-faces nil)
+ '(package-selected-packages
+   (quote
+    (evil-surround markdown-mode evil-org evil-org-mode powerline powerline-evil evil-escape helm evil-leader)))
+ '(python-shell-interpreter "python3"))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(markdown-header-face-1 ((t (:inherit markdown-header-face :height 2.0))))
+ '(markdown-header-face-2 ((t (:inherit markdown-header-face :height 1.75))))
+ '(markdown-header-face-3 ((t (:inherit markdown-header-face :height 1.5))))
+ '(markdown-header-face-4 ((t (:inherit markdown-header-face :height 1.25))))
+ '(org-done ((t (:foreground "Green1" :weight bold :height 1.5))))
+ '(org-level-1 ((t (:inherit outline-1))))
+ '(org-level-2 ((t (:inherit outline-2))))
+ '(org-todo ((t (:foreground "Red1" :weight bold :height 1.5)))))
