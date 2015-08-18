@@ -11,8 +11,11 @@ set number
 set relativenumber
 set numberwidth=5
 set ruler
+set splitright
 
 set hidden
+set bufhidden="unload"
+
 set wildmode="longest,list:longest"
 
 set laststatus=2 "Allow status bar with single window
