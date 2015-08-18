@@ -1,35 +1,10 @@
-PATH=$PATH:/Developer/usr/bin/
-
 #virtualenv wrapper
 source /Library/Frameworks/Python.framework/Versions/3.3/bin/virtualenvwrapper.sh
-
-#add scripts
-PATH="${PATH}:/usr/local/scripts"
-
-# alias vim as macvim vim
-MVIM_PATH="/usr/local/bin/mvim -v"
-alias vim="$MVIM_PATH"
-alias vi="$MVIM_PATH"
-unset MVIM_PATH
-
-# alias emacs as Emacs binary
-EMACS_PATH="/Applications/Emacs.app/Contents/MacOS/Emacs"
-alias emacs="$EMACS_PATH"
-unset EMACS_PATH
-
-export PATH
 
 export HISTCONTROL=ignorespace
 
 # virtualenv wrapper stuff
 export WORKON_HOME=~/.virtualenvs
-
-alias python="python3"
-alias vie="vim ~/.vimrc"
-alias nvie="nvim ~/.nvimrc"
-alias ls="ls -G"
-alias netcat="nc"
-alias valgrind="valgrind --leak-check=full --show-leak-kinds=all"
 
 # vi editing
 set -o vi

@@ -1,0 +1,1 @@
+alias nvie="nvim ~/.nvimrc"
