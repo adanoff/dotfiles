@@ -46,7 +46,8 @@ set omnifunc=syntaxcomplete#Complete
 "set splitbelow
 
 "Set par to be the format program
-set formatprg=par\ -w{&textwidth}
+" TODO look into custom autocmd to change this when textwidth changes
+set formatprg="par\ -w" . &textwidth
 
 "Show invisible space characters
 "Change to += to keep `$` at end of line
@@ -78,7 +79,10 @@ let g:vitality_fix_focus=0
 
 "Colorscheme stuff
 "set t_Co=256
-colorscheme detailed
+"Keep default colorscheme in hotkey window
+if $ITERM_PROFILE !=? "Hotkey Window"
+    colorscheme detailed
+endif
 
 "Copy selected text to clipboard
 vnoremap <leader>A :w !pbcopy <CR><CR>
@@ -166,3 +170,7 @@ iabbrev ssig Alex Danoff<CR>C: (301) - 512 - 8905
 "========end abbreviations========
 
 let g:snips_author = "Alex Danoff"
+
+" Tagbar stuff
+let g:tagbar_autofocus = 1
+nnoremap <F6> :TagbarToggle<CR>
