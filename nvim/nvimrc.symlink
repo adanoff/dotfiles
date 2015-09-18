@@ -34,10 +34,18 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 inoremap jk <ESC>
 inoremap <ESC> <NOP>
 
+"Turn on filetype plugins
 if has("autocmd")
-    "Turn on filetype plugins
     filetype plugin indent on
 endif
+
+" make filtype default to text if none is given
+" FIXME currently sets filetype to text for terminals which is undesirable
+"augroup default_ft
+    "autocmd!
+    "autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
+    "autocmd TermOpen * set filetype=""
+"augroup END
 
 "Turn on omnicomplete
 set omnifunc=syntaxcomplete#Complete
@@ -174,3 +182,6 @@ let g:snips_author = "Alex Danoff"
 " Tagbar stuff
 let g:tagbar_autofocus = 1
 nnoremap <F6> :TagbarToggle<CR>
+
+" NERDCommenter config
+let g:NERDSpaceDelims = 1

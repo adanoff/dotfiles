@@ -1,5 +1,5 @@
 syntax on
-set nocompatible
+set nocompatible "remove vi compatibility
 set smartindent
 set tabstop=4
 set shiftwidth=4
@@ -27,8 +27,8 @@ let maplocalleader = '\'
 inoremap jk <ESC>
 inoremap <ESC> <NOP>
 
+"Turn on filetype plugins
 if has("autocmd")
-    "Turn on filetype plugins
     filetype plugin indent on
 endif
 
@@ -60,6 +60,7 @@ if exists('$ITERM_PROFILE')
         let &t_EI = "\<Esc>]50;CursorShape=0\x7"
     endif
 end
+"end tmux integration
 
 execute pathogen#infect()
 
