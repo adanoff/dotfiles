@@ -8,7 +8,7 @@ set expandtab
 set ignorecase
 set smartcase
 set number
-set relativenumber
+" set relativenumber
 set numberwidth=5
 set ruler
 set splitright
@@ -19,6 +19,8 @@ set bufhidden="unload"
 set wildmode="longest,list:longest"
 
 set laststatus=2 "Allow status bar with single window
+
+set textwidth=80
 
 "Set leader key to ,
 let mapleader = ','
@@ -185,3 +187,20 @@ nnoremap <F6> :TagbarToggle<CR>
 
 " NERDCommenter config
 let g:NERDSpaceDelims = 1
+
+" Relative numbering toggle
+" function! NumberToggle()
+    " turn off rnu and turn on nu
+    " if(&relativenumber == 1)
+        " set rnu!
+        " set nu
+    " else
+        " set rnu
+        " set nu!
+    " endif
+" endfunc
+
+" switch numbering for normal and insert modes
+" augroup numbering
+    " autocmd InsertEnter,InsertLeave * :call NumberToggle()
+" augroup END
