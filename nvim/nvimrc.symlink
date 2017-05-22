@@ -8,38 +8,59 @@ set expandtab
 set ignorecase
 set smartcase
 set number
-" set relativenumber
+set relativenumber
 set numberwidth=5
 set ruler
 set splitright
+set showcmd
+set autochdir
 
 set hidden
 set bufhidden="unload"
 
-set wildmode="longest,list:longest"
+set wildmode=longest,list:longest,full
 
 set laststatus=2 "Allow status bar with single window
 
 set textwidth=80
 
 "Set leader key to ,
-let mapleader = ','
+" let mapleader = ','
 
 "Set local leader key to \
-let maplocalleader = '\'
+" let maplocalleader = '\'
 
 "Enable cursor shapes
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
-"let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
 "Map jk to esc
 inoremap jk <ESC>
 inoremap <ESC> <NOP>
 
+"Global replace
+nnoremap S :%s//g<LEFT><LEFT>
+nnoremap <Leader>S :s//g<LEFT><LEFT>
+
+"Word count
+vnoremap <Leader>w g<C-g>
+
 "Turn on filetype plugins
 if has("autocmd")
     filetype plugin indent on
 endif
+
+" put a vertical line at 81 characters
+set colorcolumn=81
+
+" toggle colorcolumn, cursorline, and rnu when entering/leaving windows
+augroup windows
+    autocmd!
+    autocmd WinEnter * setlocal cursorline | setlocal colorcolumn=81
+    autocmd WinEnter * setlocal relativenumber
+
+    autocmd WinLeave * setlocal nocursorline | setlocal colorcolumn=
+    autocmd WinLeave * setlocal norelativenumber
+augroup END
 
 " make filtype default to text if none is given
 " FIXME currently sets filetype to text for terminals which is undesirable
@@ -59,18 +80,10 @@ set omnifunc=syntaxcomplete#Complete
 " TODO look into custom autocmd to change this when textwidth changes
 set formatprg="par\ -w" . &textwidth
 
-"Show invisible space characters
-"Change to += to keep `$` at end of line
-exec "set listchars=tab:\uBB\uBB,trail:\uB7,nbsp:~"
-set list
-
-"tmux integration
-if exists('$TMUX')
-      "set term=screen-256color
-endif
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
 if exists('$ITERM_PROFILE')
-    if exists('$TMUX') 
+    if exists('$TMUX')
         let &t_SI = "\<Esc>[3 q"
         let &t_EI = "\<Esc>[0 q"
     else
@@ -79,7 +92,62 @@ if exists('$ITERM_PROFILE')
     endif
 end
 
-execute pathogen#infect()
+" plugins
+call plug#begin("~/.nvim/plugged")
+
+" colors
+Plug 'xero/sourcerer.vim'
+Plug 'mhinz/vim-janah'
+Plug 'morhetz/gruvbox'
+Plug 'zenorocha/dracula-theme'
+Plug 'ninja/sky'
+Plug 'danilo-augusto/vim-afterglow'
+
+Plug 'Raimondi/delimitMate'
+Plug 'vim-scripts/closetag.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'junegunn/vim-easy-align'
+
+" Plug 'ludovicchabant/vim-gutentags'
+Plug 'bling/vim-airline'
+
+Plug 'scrooloose/nerdcommenter'
+
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-vinegar'
+Plug 'tpope/vim-fugitive'
+
+Plug 'kien/ctrlp.vim'
+Plug 'benekastah/neomake'
+Plug 'rking/ag.vim'
+" Plug 'Valloric/YouCompleteMe'
+" Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+
+" syntax plugins
+Plug 'digitaltoad/vim-jade'
+Plug 'fatih/vim-go'
+Plug 'briancollins/vim-jst'
+Plug 'rust-lang/rust.vim'
+Plug 'wavded/vim-stylus'
+Plug 'jelera/vim-javascript-syntax'
+Plug 'cespare/vim-toml'
+Plug 'adimit/prolog.vim'
+Plug 'toyamarinyon/vim-swift'
+Plug 'derekwyatt/vim-scala'
+
+Plug 'majutsushi/tagbar'
+
+" snippets stuff
+Plug 'garbas/vim-snipmate'
+Plug 'marcweber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+
+Plug 'mxw/vim-jsx'
+"Plug 'mustache/vim-mustache-handlebars'
+"Plug 'digitaltoad/vim-pug'
+
+call plug#end()
 
 " Terminal stuff
 tnoremap jk <C-\><C-n>
@@ -87,11 +155,19 @@ tnoremap jk <C-\><C-n>
 " Fix focusing bug
 let g:vitality_fix_focus=0
 
+"Show invisible space characters
+"Change to += to keep `$` at end of line
+exec "set listchars=tab:\uBB\uBB,trail:\uB7,nbsp:~"
+set list
+
 "Colorscheme stuff
 "set t_Co=256
 "Keep default colorscheme in hotkey window
 if $ITERM_PROFILE !=? "Hotkey Window"
-    colorscheme detailed
+    colorscheme afterglow
+else
+    colorscheme default
+    set bg=dark
 endif
 
 "Copy selected text to clipboard
@@ -138,37 +214,15 @@ nnoremap <leader>sv :source $MYVIMRC<CR>
 " Remove search highlighting
 nnoremap <C-L> :noh<CR><C-L>
 
-"====================dragvisuals.vim setup====================
-vnoremap  <expr>  <LEFT>   DVB_Drag('left')
-vnoremap  <expr>  <RIGHT>  DVB_Drag('right')
-vnoremap  <expr>  <DOWN>   DVB_Drag('down')
-vnoremap  <expr>  <UP>     DVB_Drag('up')
-vnoremap  <expr>  D        DVB_Duplicate()
-
-" Remove any introduced trailing whitespace after moving
-let g:DVB_TrimWS = 1
-"====================end dragvisuals.vim setup====================
-
-"==========show highlighting group for current word==========
-"NEED TO DISABLE `CtrlP` plugin to make this mapping work
-nnoremap <Leader><C-P> :call <SID>SynStack()<CR>
-function! <SID>SynStack()
-    if !exists("*synstack")
-        return
-    endif
-    echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc
-"========end show highlighting group for current word========
-
 "Gundo.vim configuration
 nnoremap <F5> :GundoToggle<CR>
-
-"Disable CtrlP
-"let g:loaded_ctrlp = 1
 
 "easier space-making
 nnoremap <Leader>o A<CR><CR><C-O>O
 nnoremap <Leader>O I<CR><CR><Esc>k0Dk0Do
+
+" hard rule
+nnoremap <Leader>hr 80i-<Esc>0
 
 "==========abbreviations==========
 iabbrev adn and
@@ -183,6 +237,7 @@ let g:snips_author = "Alex Danoff"
 
 " Tagbar stuff
 let g:tagbar_autofocus = 1
+let g:tagbar_autoclose = 1
 nnoremap <F6> :TagbarToggle<CR>
 
 " NERDCommenter config
@@ -204,3 +259,81 @@ let g:NERDSpaceDelims = 1
 " augroup numbering
     " autocmd InsertEnter,InsertLeave * :call NumberToggle()
 " augroup END
+
+" increase terminal scrollback size
+augroup term_scrollback
+    autocmd!
+    autocmd TermOpen * let g:terminal_scrollback_buffer_size = 50000
+augroup END
+
+" Underline the line above the cursor
+function! Underline(offset, character)
+
+    let l:cursor_pos = getcurpos()
+    let l:cursor_line = l:cursor_pos[1]
+    let l:under_line = l:cursor_line + a:offset
+
+    " make sure we're not at the top
+    if l:under_line <= 0
+        return
+    endif
+
+    let l:line_str = getline(l:under_line)
+    let l:length = len(l:line_str)
+
+    " quit if line is empty
+    if l:length ==? 0
+        return
+    endif
+
+    let l:str_start = match(l:line_str, "\\S") + 1
+    let l:str_end = match(l:line_str, "\\s\\+$") "handle trailing whitespace
+
+    " set end to last character if no trailing whitespace
+    if l:str_end ==? -1
+        let l:str_end = l:length
+    endif
+
+    let l:underline_len = l:str_end - l:str_start + 1
+    let l:space_len = l:str_start
+
+    " echo l:under_line
+    " echom "S: " . l:str_start . " E: " . l:str_end . " U: " . l:underline_len
+
+    let l:cursor_offset = 0
+
+    " make sure there's something to underline, and do it
+    if l:underline_len > 0
+        exec "normal! " . l:under_line . "G"
+        normal! o
+        normal! d0x
+        exec "normal! " . l:space_len . "i "
+        exec "normal! " . l:underline_len . "i" . a:character
+        normal! $x
+        let l:cursor_offset = 1
+    end
+
+    let l:cursor_pos[1] += l:cursor_offset
+
+    call setpos(".", l:cursor_pos)
+
+endfunc
+
+" make backspace delete to the beginning of the line
+nnoremap <BS> d0x
+
+" place properly sized underline below above line
+nnoremap <silent> <Leader>hh :call Underline(0, '-')<CR>
+let delimitMate_expand_cr = 1
+
+let g:gutentags_enabled=0
+let g:closetag_filenames = "*.html,*.xml,*.xhtml,*.js,*.jsx"
+
+let g:ctrlp_working_path_mode = 'rc'
+
+" Easy align
+vmap <Enter> <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+" Matchit
+runtime macros/matchit.vim

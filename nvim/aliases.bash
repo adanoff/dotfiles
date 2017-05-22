@@ -1,1 +1,1 @@
-alias nvie="nvim ~/.nvimrc"
+alias nvie="nvim ~/.config/nvim/init.vim"
