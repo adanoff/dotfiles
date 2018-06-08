@@ -13,12 +13,21 @@ set numberwidth=5
 set ruler
 set splitright
 set showcmd
-set autochdir
+set autoread
+" set autochdir " Bad for Command-T
+set encoding=utf-8
+set formatoptions+=cro
+set shortmess+=A
+
+set inccommand=split
 
 set hidden
 set bufhidden="unload"
 
+set wildmenu
 set wildmode=longest,list:longest,full
+
+set statusline=%F\ %r\ %h\ %=(%B)\ %c\ %l/%L\ %=%m\ %y
 
 set laststatus=2 "Allow status bar with single window
 
@@ -36,6 +45,12 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 "Map jk to esc
 inoremap jk <ESC>
 inoremap <ESC> <NOP>
+
+nnoremap vv <C-W><C-V>
+
+nnoremap Z zz
+
+nnoremap <C-G> 1<C-G>
 
 "Global replace
 nnoremap S :%s//g<LEFT><LEFT>
@@ -60,6 +75,12 @@ augroup windows
 
     autocmd WinLeave * setlocal nocursorline | setlocal colorcolumn=
     autocmd WinLeave * setlocal norelativenumber
+augroup END
+
+" automatically refresh if changed elsewhere
+augroup autoread
+    autocmd!
+    autocmd FocusGained * checktime
 augroup END
 
 " make filtype default to text if none is given
@@ -102,6 +123,7 @@ Plug 'morhetz/gruvbox'
 Plug 'zenorocha/dracula-theme'
 Plug 'ninja/sky'
 Plug 'danilo-augusto/vim-afterglow'
+" Plug 'kisom/eink.vim'
 
 Plug 'Raimondi/delimitMate'
 Plug 'vim-scripts/closetag.vim'
@@ -109,39 +131,31 @@ Plug 'easymotion/vim-easymotion'
 Plug 'junegunn/vim-easy-align'
 
 " Plug 'ludovicchabant/vim-gutentags'
-Plug 'bling/vim-airline'
 
 Plug 'scrooloose/nerdcommenter'
 
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-vinegar'
-Plug 'tpope/vim-fugitive'
 
-Plug 'kien/ctrlp.vim'
 Plug 'benekastah/neomake'
-Plug 'rking/ag.vim'
-" Plug 'Valloric/YouCompleteMe'
-" Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+Plug 'wincent/command-t'
 
 " syntax plugins
 Plug 'digitaltoad/vim-jade'
-Plug 'fatih/vim-go'
-Plug 'briancollins/vim-jst'
+Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'rust-lang/rust.vim'
 Plug 'wavded/vim-stylus'
 Plug 'jelera/vim-javascript-syntax'
 Plug 'cespare/vim-toml'
-Plug 'adimit/prolog.vim'
-Plug 'toyamarinyon/vim-swift'
+Plug 'adimit/prolog.vim', { 'for': 'prolog' }
+Plug 'toyamarinyon/vim-swift', { 'for': 'swift' }
 Plug 'derekwyatt/vim-scala'
-
-Plug 'majutsushi/tagbar'
+Plug 'prettier/vim-prettier', {
+    \ 'do': 'npm install',
+    \ 'for': ['javascript'] }
 
 " snippets stuff
-Plug 'garbas/vim-snipmate'
-Plug 'marcweber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
+" Plug 'SirVer/ultisnips'
 
 Plug 'mxw/vim-jsx'
 "Plug 'mustache/vim-mustache-handlebars'
@@ -161,10 +175,10 @@ exec "set listchars=tab:\uBB\uBB,trail:\uB7,nbsp:~"
 set list
 
 "Colorscheme stuff
-"set t_Co=256
+set t_Co=256
 "Keep default colorscheme in hotkey window
 if $ITERM_PROFILE !=? "Hotkey Window"
-    colorscheme afterglow
+    colorscheme min
 else
     colorscheme default
     set bg=dark
@@ -181,28 +195,6 @@ nnoremap <leader>P :ha > %:r.ps <CR> !open %:r.ps
 
 "Lorem Ipsum
 "nnoremap LI :Loremipsum! 20 _ _<CR>
-
-"==========Airline configuration==========
-
-if !exists('g:airline_symbols')
-   let g:airline_symbols = {}
-endif
-
-" unicode symbols
-let g:airline_left_sep = ''
-let g:airline_right_sep = ''
-let g:airline_symbols.crypt = '🔒'
-let g:airline_symbols.linenr = '¶'
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.whitespace = 'Ξ'
-
-let g:airline_section_b = '%{getcwd()}'
-let g:airline_section_x = '%y'
-
-let g:airline#extensions#ctrlp#color_template = 'normal'
-
-"========END Airline configuration========
 
 "Make it easier to replace with the first suggestion for spelling
 nnoremap <leader>z= 1z=
@@ -337,3 +329,17 @@ nmap ga <Plug>(EasyAlign)
 
 " Matchit
 runtime macros/matchit.vim
+
+" Command-T
+let g:CommandTEncoding='UTF-8'
+let g:CommandTFileScanner='watchman'
+let g:CommandTMaxCachedDirectories=10
+let g:CommandTMaxFiles=100000
+let g:CommandTTraverseSCM='pwd'
+
+" ultisnips
+let g:UltiSnipsUsePythonVersion=3
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<c-p>"
+let g:UltiSnipsEditSplit="vertical"
