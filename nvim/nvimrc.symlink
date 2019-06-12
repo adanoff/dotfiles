@@ -1,4 +1,3 @@
-syntax on
 set smartindent
 set tabstop=4
 set shiftwidth=4
@@ -18,6 +17,31 @@ set autoread
 set encoding=utf-8
 set formatoptions+=cro
 set shortmess+=A
+
+" add completion from included files
+set complete+=i,d
+
+" set this before the if because has('python3') will source the file we need
+" this to take effect in
+let g:python3_host_prog=expand('~/.pyenv/versions/py3nvim/bin/python')
+
+" disable python 2 if we have python3
+if has('python3')
+  let g:loaded_python_provider=1
+endif
+
+syntax on
+
+" add xcode dirs to path if on mac
+if has('mac')
+  " trim result to get rid of ctrl chars at end
+  let s:sdk_path = system("xcrun --show-sdk-path")[:-2]
+  let s:inc_path = s:sdk_path . "/usr/include/"
+  let &path .= s:inc_path . ","
+endif
+
+" search down from current dir for gf, etc
+set path+=**,
 
 set inccommand=split
 
@@ -56,6 +80,12 @@ nnoremap <C-G> 1<C-G>
 nnoremap S :%s//g<LEFT><LEFT>
 nnoremap <Leader>S :s//g<LEFT><LEFT>
 
+"Remove trailing spaces
+"Use :silent! to suppress error messages in the search
+"Use <silent> to prevent the command from appearing
+"Use <C-o> to get back to where we were
+nnoremap <silent> <Leader>ss :exe ":silent! %s/\\s\\+$//g"<CR><C-o><C-l>
+
 "Word count
 vnoremap <Leader>w g<C-g>
 
@@ -66,6 +96,7 @@ endif
 
 " put a vertical line at 81 characters
 set colorcolumn=81
+set cursorline
 
 " toggle colorcolumn, cursorline, and rnu when entering/leaving windows
 augroup windows
@@ -114,7 +145,7 @@ if exists('$ITERM_PROFILE')
 end
 
 " plugins
-call plug#begin("~/.nvim/plugged")
+call plug#begin("~/.config/nvim/plugged")
 
 " colors
 Plug 'xero/sourcerer.vim'
@@ -141,21 +172,20 @@ Plug 'benekastah/neomake'
 Plug 'wincent/command-t'
 
 " syntax plugins
-Plug 'digitaltoad/vim-jade'
-Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'rust-lang/rust.vim'
-Plug 'wavded/vim-stylus'
 Plug 'jelera/vim-javascript-syntax'
 Plug 'cespare/vim-toml'
-Plug 'adimit/prolog.vim', { 'for': 'prolog' }
 Plug 'toyamarinyon/vim-swift', { 'for': 'swift' }
 Plug 'derekwyatt/vim-scala'
 Plug 'prettier/vim-prettier', {
     \ 'do': 'npm install',
     \ 'for': ['javascript'] }
+Plug 'davidhalter/jedi-vim', { 'for': 'python' }
+Plug 'zah/nim.vim'
+Plug 'dart-lang/dart-vim-plugin'
 
 " snippets stuff
-" Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 
 Plug 'mxw/vim-jsx'
 "Plug 'mustache/vim-mustache-handlebars'
@@ -176,12 +206,21 @@ set list
 
 "Colorscheme stuff
 set t_Co=256
+
 "Keep default colorscheme in hotkey window
-if $ITERM_PROFILE !=? "Hotkey Window"
-    colorscheme min
-else
-    colorscheme default
-    set bg=dark
+if exists('$ITERM_PROFILE')
+    if $ITERM_PROFILE ==# "Default"
+        colorscheme min
+    else
+        colorscheme default
+        if $ITERM_PROFILE ==# "Hotkey Window"
+            set bg=dark
+        elseif $ITERM_PROFILE ==# "Projection"
+            set bg=light
+        else
+            echom "Unknown $ITERM_PROFILE: " . $ITERM_PROFILE
+        endif
+    endif
 endif
 
 "Copy selected text to clipboard
@@ -205,9 +244,6 @@ nnoremap <leader>sv :source $MYVIMRC<CR>
 
 " Remove search highlighting
 nnoremap <C-L> :noh<CR><C-L>
-
-"Gundo.vim configuration
-nnoremap <F5> :GundoToggle<CR>
 
 "easier space-making
 nnoremap <Leader>o A<CR><CR><C-O>O
@@ -318,14 +354,7 @@ nnoremap <BS> d0x
 nnoremap <silent> <Leader>hh :call Underline(0, '-')<CR>
 let delimitMate_expand_cr = 1
 
-let g:gutentags_enabled=0
 let g:closetag_filenames = "*.html,*.xml,*.xhtml,*.js,*.jsx"
-
-let g:ctrlp_working_path_mode = 'rc'
-
-" Easy align
-vmap <Enter> <Plug>(EasyAlign)
-nmap ga <Plug>(EasyAlign)
 
 " Matchit
 runtime macros/matchit.vim
